@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đấu Trí GHN: Siêu Sao Giải Quyết Vấn Đề</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        .quiz-bg {
+            background-color: #1a202c;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+        .btn {
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .answer-btn.correct {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            animation: pulse 0.5s;
+        }
+        .answer-btn.incorrect {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            animation: shake 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .timer-ring {
+            transition: stroke-dashoffset 1s linear;
+        }
+        .leaderboard-item.current-user {
+            background-color: #facc15; /* yellow-400 */
+            color: #1a202c; /* gray-900 */
+        }
+    </style>
+</head>
+<body class="quiz-bg text-white min-h-screen flex items-center justify-center p-4">
+
+    <div id="app-container" class="w-full max-w-6xl mx-auto">
+
+        <!-- Màn hình bắt đầu -->
+        <div id="start-screen" class="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-2xl mx-auto">
+             <div class="flex justify-center mb-6">
+                 <svg class="w-24 h-24 text-yellow-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21.5C9 20.42 8.5 19.5 7.5 19.5C6.5 19.5 6 20.42 6 21.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 21.5C18 20.42 17.5 19.5 16.5 19.5C15.5 19.5 15 20.42 15 21.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 19.5H12.5C13.6 19.5 14.5 18.6 14.5 17.5V14.5C14.5 13.4 13.6 12.5 12.5 12.5H11.5C10.4 12.5 9.5 13.4 9.5 14.5V17.5C9.5 18.6 10.4 19.5 11.5 19.5H12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.28 3.4301L13.88 2.3301C14.26 1.6301 13.77 0.730101 13.01 0.730101H10.99C10.23 0.730101 9.74 1.6301 10.12 2.3301L10.72 3.4301C11.45 4.7301 12.55 4.7301 13.28 3.4301Z" fill="currentColor"/><path d="M19.5 11.85C19.5 12.75 19.01 13.88 18.51 14.65C17.93 15.55 17.06 16.29 16.04 16.71C15.02 17.13 13.91 17.26 12.83 17.09C10.21 16.69 8.1 14.58 7.7 11.96C7.53 10.88 7.66 9.77002 8.08 8.75002C8.5 7.73002 9.24 6.86002 10.14 6.28002C11.75 5.30002 13.74 5.44002 15.21 6.64002C16.03 7.29002 16.66 8.16002 16.98 9.15002" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 10.5C11.33 10.5 12 9.83 12 9C12 8.17 11.33 7.5 10.5 7.5C9.67 7.5 9 8.17 9 9C9 9.83 9.67 10.5 10.5 10.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 9.5L16.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 11.5L6 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black mb-2 text-yellow-400">ĐẤU TRÍ GHN</h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-8">Tìm Kiếm Siêu Sao Giải Quyết Vấn Đề</p>
+            <div class="mb-6">
+                <input id="player-name" type="text" placeholder="Nhập tên của bạn..." class="w-full max-w-sm px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+            <button id="start-btn" class="btn bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold text-xl px-12 py-4 rounded-lg shadow-lg">
+                VÀO ĐẤU TRƯỜNG!
+            </button>
+        </div>
+
+        <!-- Màn hình chính (Câu hỏi + Bảng xếp hạng) -->
+        <div id="main-screen" class="hidden">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Phần câu hỏi -->
+                <div id="quiz-container" class="w-full lg:w-2/3">
+                    <div class="p-8 bg-gray-800 rounded-2xl shadow-2xl h-full">
+                         <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+                            <div>
+                                <p id="player-info" class="text-lg font-bold text-yellow-400">Chiến Binh</p>
+                                <p id="score-info" class="text-md text-gray-300">Điểm: 0</p>
+                            </div>
+                            <div class="relative w-20 h-20 flex items-center justify-center">
+                                <svg class="absolute w-full h-full" viewBox="0 0 100 100"><circle class="text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" /><circle id="timer-ring" class="text-yellow-400 timer-ring" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" style="stroke-dasharray: 283; stroke-dashoffset: 0;" /></svg>
+                                <span id="timer-text" class="text-2xl font-bold">30</span>
+                            </div>
+                        </div>
+                        <div class="mb-8">
+                            <p id="question-number" class="text-sm text-gray-400 mb-2">Câu hỏi 1 / 5</p>
+                            <h2 id="question-text" class="text-2xl md:text-3xl font-bold leading-tight">Đây là nội dung câu hỏi?</h2>
+                        </div>
+                        <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
+                <!-- Bảng xếp hạng -->
+                <div id="leaderboard-container" class="w-full lg:w-1/3">
+                    <div class="p-6 bg-gray-800 rounded-2xl shadow-2xl h-full">
+                        <h3 class="text-2xl font-bold text-center mb-4 text-yellow-400">BẢNG XẾP HẠNG</h3>
+                        <div id="leaderboard-list" class="space-y-3">
+                            <p class="text-gray-400 text-center">Đang chờ người chơi...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Màn hình kết quả -->
+        <div id="result-screen" class="hidden text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-2xl mx-auto">
+            <h2 class="text-3xl font-black text-yellow-400 mb-2">HOÀN THÀNH!</h2>
+            <p id="result-player-name" class="text-xl text-gray-300 mb-4">Chúc mừng, Chiến Binh!</p>
+            <div class="bg-gray-900 rounded-lg p-6 mb-8">
+                <p class="text-lg text-gray-400">Điểm số cuối cùng của bạn</p>
+                <p id="final-score" class="text-6xl font-black text-white my-2">0</p>
+                <p id="result-summary" class="text-md text-gray-300">Bạn đã trả lời đúng 0/5 câu hỏi.</p>
+            </div>
+            <button id="play-again-btn" class="btn bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold text-xl px-12 py-4 rounded-lg shadow-lg">
+                CHƠI LẠI
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- FIREBASE IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- DỮ LIỆU CÂU HỎI ---
+        const quizData = [
+            { question: 'Theo bạn, "Vấn đề" (Problem) khác với "Hiện tượng" (Symptom) ở điểm nào là cơ bản nhất?', answers: ['Vấn đề luôn gây thiệt hại về tiền bạc, còn hiện tượng thì không.', 'Vấn đề là sự sai khác giữa thực tế và kỳ vọng, trong khi hiện tượng chỉ là biểu hiện có thể quan sát được của vấn đề đó.', 'Giải quyết hiện tượng sẽ xử lý được gốc rễ, còn giải quyết vấn đề chỉ là tạm thời.', 'Vấn đề là do con người gây ra, còn hiện tượng là do hệ thống.'], correct: 1 },
+            { question: 'Tại sao việc áp dụng một quy trình hệ thống lại quan trọng hơn cách làm "chữa cháy" (xử lý sự vụ) khi giải quyết vấn đề?', answers: ['Vì "chữa cháy" tốn ít thời gian hơn nên thường không hiệu quả.', 'Vì quy trình hệ thống giúp tìm ra và xử lý nguyên nhân gốc rễ, ngăn vấn đề lặp lại.', 'Vì chỉ có cấp quản lý mới được dùng quy trình, nhân viên chỉ nên "chữa cháy".', 'Vì quy trình hệ thống giúp đổ lỗi chính xác cho người gây ra vấn đề.'], correct: 1 },
+            { question: 'Khi bạn muốn tìm và hệ thống hóa TOÀN BỘ CÁC NGUYÊN NHÂN CÓ THỂ gây ra một vấn đề, công cụ nào sau đây là phù hợp nhất để bắt đầu?', answers: ['Biểu đồ xương cá (Ishikawa)', 'Chu trình PDCA', 'Ma trận RACI', 'Phân tích Pareto (80/20)'], correct: 0 },
+            { question: 'Để xác định vấn đề nào là "trọng tâm" cần tập trung nguồn lực giải quyết trước, phương pháp nào hiệu quả nhất?', answers: ['Chọn vấn đề dễ nhất để giải quyết cho nhanh.', 'Giải quyết vấn đề được nhiều người phàn nàn nhất.', 'Sử dụng Ma trận Ưu tiên (Impact/Effort) để so sánh giữa Tác động và Nỗ lực.', 'Chờ cấp trên chỉ định vấn đề cần ưu tiên.'], correct: 2 },
+            { question: 'Sau khi xác định vấn đề trọng tâm là "Giao hàng trễ", kỹ thuật nào giúp bạn ĐÀO SÂU để tìm ra nguyên nhân cốt lõi thực sự?', answers: ['Brainstorming', 'Gantt Chart', '5 Whys', 'Checklist'], correct: 2 }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const playerNameInput = document.getElementById('player-name');
+        const startBtn = document.getElementById('start-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const playerInfo = document.getElementById('player-info');
+        const scoreInfo = document.getElementById('score-info');
+        const timerText = document.getElementById('timer-text');
+        const timerRing = document.getElementById('timer-ring');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers-container');
+        const resultPlayerName = document.getElementById('result-player-name');
+        const finalScore = document.getElementById('final-score');
+        const resultSummary = document.getElementById('result-summary');
+        const leaderboardList = document.getElementById('leaderboard-list');
+
+        // --- QUIZ STATE ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let playerName = '';
+        let timer;
+        let timeLeft = 30;
+        const FULL_DASH_ARRAY = 283;
+        
+        // --- FIREBASE STATE ---
+        let db, auth, userId;
+        let unsubscribeLeaderboard;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-quiz-app';
+        const collectionPath = `/artifacts/${appId}/public/data/live_quiz_players`;
+
+        // --- INITIALIZATION ---
+        async function initialize() {
+            try {
+                // Lấy cấu hình Firebase từ biến toàn cục
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Lắng nghe thay đổi trạng thái đăng nhập
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Authenticated with userId:", userId);
+                        // Nếu đã đăng nhập, bắt đầu game
+                        await setupPlayer();
+                        setupLeaderboardListener();
+                        showQuestion();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                alert("Không thể kết nối đến máy chủ. Vui lòng thử lại.");
+            }
+        }
+
+        async function handleStart() {
+            playerName = playerNameInput.value.trim() || 'Chiến Binh';
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            mainScreen.classList.remove('hidden');
+            
+            // Đăng nhập để lấy userId
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Authentication failed:", error);
+                alert("Đăng nhập thất bại. Vui lòng tải lại trang.");
+            }
+        }
+        
+        async function setupPlayer() {
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswersCount = 0;
+            playerInfo.textContent = playerName;
+            scoreInfo.textContent = `Điểm: 0`;
+            // Ghi dữ liệu người chơi lên Firestore
+            await updatePlayerInFirestore();
+        }
+
+        async function updatePlayerInFirestore() {
+            if (!userId || !db) return;
+            try {
+                const playerDocRef = doc(db, collectionPath, userId);
+                await setDoc(playerDocRef, {
+                    name: playerName,
+                    score: score
+                }, { merge: true }); // Dùng merge để không ghi đè dữ liệu khác nếu có
+            } catch (error) {
+                console.error("Failed to update player data:", error);
+            }
+        }
+
+        function setupLeaderboardListener() {
+            const q = query(collection(db, collectionPath));
+            unsubscribeLeaderboard = onSnapshot(q, (querySnapshot) => {
+                const players = [];
+                querySnapshot.forEach((doc) => {
+                    players.push({ id: doc.id, ...doc.data() });
+                });
+                // Sắp xếp người chơi theo điểm số giảm dần
+                players.sort((a, b) => b.score - a.score);
+                updateLeaderboardUI(players);
+            });
+        }
+
+        function updateLeaderboardUI(players) {
+            leaderboardList.innerHTML = ''; // Xóa danh sách cũ
+            if (players.length === 0) {
+                leaderboardList.innerHTML = '<p class="text-gray-400 text-center">Đang chờ người chơi...</p>';
+                return;
+            }
+            players.forEach((player, index) => {
+                const playerElement = document.createElement('div');
+                playerElement.classList.add('leaderboard-item', 'flex', 'justify-between', 'items-center', 'p-3', 'bg-gray-700', 'rounded-lg', 'transition-all', 'duration-300');
+                // Highlight người chơi hiện tại
+                if (player.id === userId) {
+                    playerElement.classList.add('current-user');
+                }
+                
+                const rank = index + 1;
+                let rankDisplay;
+                if (rank === 1) rankDisplay = '🥇';
+                else if (rank === 2) rankDisplay = '🥈';
+                else if (rank === 3) rankDisplay = '🥉';
+                else rankDisplay = `#${rank}`;
+
+                playerElement.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg w-6 text-center">${rankDisplay}</span>
+                        <span class="font-medium">${player.name}</span>
+                    </div>
+                    <span class="font-bold text-lg">${player.score}</span>
+                `;
+                leaderboardList.appendChild(playerElement);
+            });
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionNumber.textContent = `Câu hỏi ${currentQuestionIndex + 1} / ${quizData.length}`;
+            questionText.textContent = currentQuestion.question;
+
+            currentQuestion.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.innerHTML = `<span class="font-bold mr-2">${String.fromCharCode(65 + index)}.</span> ${answer}`;
+                button.classList.add('btn', 'answer-btn', 'w-full', 'text-left', 'p-4', 'bg-gray-700', 'hover:bg-gray-600', 'rounded-lg', 'border-2', 'border-gray-600', 'focus:outline-none', 'focus:ring-2', 'focus:ring-yellow-400');
+                button.addEventListener('click', () => selectAnswer(index));
+                answersContainer.appendChild(button);
+            });
+            
+            timeLeft = 30;
+            startTimer();
+        }
+
+        function resetState() {
+            while (answersContainer.firstChild) {
+                answersContainer.removeChild(answersContainer.firstChild);
+            }
+            clearInterval(timer);
+            timerText.textContent = 30;
+            timerRing.setAttribute('stroke-dashoffset', 0);
+            timerRing.classList.remove('text-orange-400', 'text-red-500');
+            timerRing.classList.add('text-yellow-400');
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timerText.textContent = timeLeft;
+                setCircleDashoffset();
+                if (timeLeft <= 10) timerRing.classList.add('text-orange-400');
+                if (timeLeft <= 5) timerRing.classList.add('text-red-500');
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    selectAnswer(-1);
+                }
+            }, 1000);
+        }
+
+        function setCircleDashoffset() {
+            const rawTimeFraction = timeLeft / 30;
+            const timeFraction = rawTimeFraction - (1 / 30) * (1 - rawTimeFraction);
+            const dashoffset = (1 - timeFraction) * FULL_DASH_ARRAY;
+            timerRing.setAttribute('stroke-dashoffset', dashoffset);
+        }
+
+        async function selectAnswer(selectedIndex) {
+            clearInterval(timer);
+            const currentQuestion = quizData[currentQuestionIndex];
+            const isCorrect = selectedIndex === currentQuestion.correct;
+            const answerButtons = answersContainer.querySelectorAll('.answer-btn');
+
+            if (isCorrect) {
+                score += 100 + timeLeft * 5;
+                correctAnswersCount++;
+                scoreInfo.textContent = `Điểm: ${score}`;
+                await updatePlayerInFirestore(); // Cập nhật điểm lên Firestore
+            }
+            
+            answerButtons.forEach((button, index) => {
+                button.disabled = true;
+                if (index === currentQuestion.correct) button.classList.add('correct');
+                else if (index === selectedIndex) button.classList.add('incorrect');
+            });
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizData.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            mainScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            resultPlayerName.textContent = `Chúc mừng, ${playerName}!`;
+            finalScore.textContent = score;
+            resultSummary.textContent = `Bạn đã trả lời đúng ${correctAnswersCount}/${quizData.length} câu hỏi.`;
+            if (unsubscribeLeaderboard) unsubscribeLeaderboard(); // Dừng lắng nghe khi game kết thúc
+        }
+
+        function resetGame() {
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            playerNameInput.value = '';
+        }
+
+        // --- EVENT LISTENERS ---
+        startBtn.addEventListener('click', handleStart);
+        playAgainBtn.addEventListener('click', resetGame);
+        
+        // Khởi chạy ứng dụng khi trang được tải
+        window.onload = initialize;
+    </script>
+</body>
+</html>
